@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Calculator | Made using ChatGPT</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #c82c2c;
+        }
+
+        .calculator {
+            width: 290px;
+            border: 1px solid #ff0000;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            background-color: #681111;
+            padding: 10px;
+        }
+
+        .display {
+            width: 89%;
+            padding: 15px;
+            border: 1px solid #ff0000;
+            border-radius: 5px;
+            font-size: 1.5em;
+            text-align: left;
+            margin-bottom: 10px;
+            background-color: #990202;
+            overflow: hidden; /* Ensures no overflow text */
+            white-space: nowrap; /* Keeps the text in a single line */
+        }
+
+        .button-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: -5px; /* To adjust spacing between buttons */
+        }
+
+        .button {
+            flex: 1;
+            padding: 20px;
+            font-size: 1.2em;
+            text-align: center;
+            border: 1px solid #ff0000;
+            border-radius: 5px;
+            margin: 5px;
+            cursor: pointer;
+            background-color: #cf1111;
+            color: rgb(255, 255, 255);
+        }
+
+        .button:hover {
+            background-color: #9e0606;
+        }
+
+        .button.operator {
+            background-color: #ea1616;
+            color: white;
+        }
+
+        .button.operator:hover {
+            background-color: #cd1e1e;
+        }
+
+        .button.double {
+            flex: 2;
+        }
+
+        .button.clear {
+            background-color: #cb1515;
+            color: white;
+        }
+
+        .button.clear:hover {
+            background-color: #ba1f1d;
+        }
+
+        .button.ac {
+            background-color: #cb0505;
+            color: white;
+        }
+
+        .button.ac:hover {
+            background-color: #ae0404;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div id="display" class="display"></div>
+        <div class="button-row">
+            <div class="button ac" onclick="backspace()">AC</div>
+            <div class="button clear" onclick="clearDisplay()">C</div>
+            <div class="button operator" onclick="appendToDisplay('/')">/</div>
+            <div class="button operator" onclick="appendToDisplay('*')">*</div>
+        </div>
+        <div class="button-row">
+            <div class="button" onclick="appendToDisplay('7')">7</div>
+            <div class="button" onclick="appendToDisplay('8')">8</div>
+            <div class="button" onclick="appendToDisplay('9')">9</div>
+            <div class="button operator" onclick="appendToDisplay('-')">-</div>
+        </div>
+        <div class="button-row">
+            <div class="button" onclick="appendToDisplay('4')">4</div>
+            <div class="button" onclick="appendToDisplay('5')">5</div>
+            <div class="button" onclick="appendToDisplay('6')">6</div>
+            <div class="button operator" onclick="appendToDisplay('+')">+</div>
+        </div>
+        <div class="button-row">
+            <div class="button double" onclick="appendToDisplay('0')">0</div>
+            <div class="button" onclick="appendToDisplay('1')">1</div>
+            <div class="button" onclick="appendToDisplay('2')">2</div>
+            <div class="button" onclick="appendToDisplay('3')">3</div>
+            <div class="button operator double" onclick="calculate()">=</div>
+        </div>
+    </div>
+
+    <script>
+        let display = document.getElementById('display');
+        let newInput = false;
+
+        function appendToDisplay(value) {
+            if (newInput) {
+                display.textContent = value;
+                newInput = false;
+            } else if (display.textContent === '' || display.textContent === '0') {
+                display.textContent = value;
+            } else {
+                display.textContent += value;
+            }
+        }
+
+        function clearDisplay() {
+            display.textContent = '';
+            newInput = false;
+        }
+
+        function backspace() {
+            // Remove the last character from the display
+            if (display.textContent.length > 1) {
+                display.textContent = display.textContent.slice(0, -1);
+            } else {
+                display.textContent = '';
+            }
+        }
+
+        function calculate() {
+            try {
+                display.textContent = eval(display.textContent) || '';
+                newInput = true; // Indicate that the next input should start fresh
+            } catch (e) {
+                display.textContent = 'Error';
+            }
+        }
+        document.addEventListener('keydown', function(event) {
+    const key = event.key;
+
+    // Handle numeric keys
+    if ('0123456789'.includes(key)) {
+        appendToDisplay(key);
+    }
+    
+    // Handle operator keys
+    if ('/*+-'.includes(key)) {
+        appendToDisplay(key);
+    }
+
+    // Handle Enter key
+    if (key === 'Enter') {
+        calculate();
+    }
+
+    // Handle Backspace key
+    if (key === 'Backspace') {
+        backspace();
+    }
+
+    // Handle Escape key (clear display)
+    if (key === 'Escape') {
+        clearDisplay();
+    }
+});
+
+// Modified appendToDisplay function to prevent default behavior on leading zero
+function appendToDisplay(value) {
+    if (newInput && !isNaN(value)) {
+        display.textContent = value;
+        newInput = false;
+    } else if (display.textContent === '' || display.textContent === '0') {
+        display.textContent = value;
+    } else {
+        display.textContent += value;
+    }
+}
+
+// Modified backspace function to prevent default behavior on empty display
+function backspace() {
+    if (display.textContent.length > 0) {
+        display.textContent = display.textContent.slice(0, -1);
+    }
+}
+document.addEventListener('keydown', function(event) {
+    const key = event.key;
+
+    // Handle numeric keys
+    if ('0123456789'.includes(key)) {
+        appendToDisplay(key);
+    }
+    
+    // Handle operator keys
+    if ('/*+-'.includes(key)) {
+        appendToDisplay(key);
+    }
+
+    // Handle Enter key
+    if (key === 'Enter') {
+        calculate();
+    }
+
+    // Handle Backspace key
+    if (key === 'Backspace') {
+        backspace();
+    }
+
+    // Handle Escape key (clear display)
+    if (key === 'Escape') {
+        clearDisplay();
+    }
+});
+
+// Function to append values to the display
+function appendToDisplay(value) 
+{}
+    const displayContent = display.textContent;
+
+    document.addEventListener('keydown', function(event) {
+    const key = event.key;
+
+    // Handle numeric keys
+    if ('0123456789'.includes(key)) {
+        appendToDisplay(key);
+    }
+    
+    // Handle operator keys
+    if ('/*+-'.includes(key)) {
+        appendToDisplay(key);
+    }
+
+    // Handle Enter key
+    if (key === 'Enter') {
+        calculate();
+    }
+
+    // Handle Backspace key
+    if (key === 'Backspace') {
+        backspace();
+    }
+
+    // Handle Escape key (clear display)
+    if (key === 'Escape') {
+        clearDisplay();
+    }
+});
+
+// Function to append values to the display
+function appendToDisplay(value) {
+    const displayContent = display.textContent;
+
+    // Prevent multiple consecutive operators
+    if ('/*+-'.includes(value)) {
+        const lastChar = displayContent.slice(-1);
+        if ('/*+-'.includes(lastChar)) {
+            // Replace the last operator with the new one
+            display.textContent = displayContent.slice(0, -1) + value;
+        } else {
+            display.textContent += value;
+        }
+    } else if (newInput && !isNaN(value)) {
+        display.textContent = value;
+        newInput = false;
+    } else if (displayContent === '' || displayContent === '0') {
+        display.textContent = value;
+    } else {
+        display.textContent += value;
+    }
+}
+
+// Function to clear the display
+function clearDisplay() {
+    display.textContent = '';
+    newInput = false;
+}
+
+// Function to handle backspace
+function backspace() {
+    if (display.textContent.length > 0) {
+        display.textContent = display.textContent.slice(0, -1);
+    }
+}
+
+// Function to calculate the result
+function calculate() {
+    try {
+        // Basic validation to check for empty expressions or malformed input
+        const expression = display.textContent.trim();
+        if (!expression || /[/*+\-]{2,}/.test(expression)) {
+            throw new Error("Invalid expression");
+        }
+        display.textContent = eval(expression) || '';
+        newInput = true; // Indicate that the next input should start fresh
+    } catch (e) {
+        display.textContent = 'Error';
+    }
+}
+document.addEventListener('keydown', function(event) {
+    const key = event.key;
+
+    // Handle numeric keys
+    if ('0123456789'.includes(key)) {
+        appendToDisplay(key);
+    }
+    
+    // Handle operator keys
+    if ('/*+-'.includes(key)) {
+        appendToDisplay(key);
+    }
+
+    // Handle Enter key
+    if (key === 'Enter') {
+        calculate();
+    }
+
+    // Handle Backspace key
+    if (key === 'Backspace') {
+        backspace();
+    }
+
+    // Handle Escape key (clear display)
+    if (key === 'Escape') {
+        clearDisplay();
+    }
+});
+
+// Function to append values to the display
+function appendToDisplay(value) {
+    const displayContent = display.textContent;
+
+    // Prevent multiple consecutive operators
+    if ('/*+-'.includes(value)) {
+        const lastChar = displayContent.slice(-1);
+        if ('/*+-'.includes(lastChar)) {
+            // Replace the last operator with the new one
+            display.textContent = displayContent.slice(0, -1) + value;
+        } else {
+            display.textContent += value;
+        }
+    } else if (newInput && !isNaN(value)) {
+        display.textContent = value;
+        newInput = false;
+    } else if (displayContent === '' || displayContent === '0') {
+        display.textContent = value;
+    } else {
+        display.textContent += value;
+    }
+}
+
+// Function to clear the display
+function clearDisplay() {
+    display.textContent = '';
+    newInput = false;
+}
+
+// Function to handle backspace
+function backspace() {
+    if (display.textContent.length > 0) {
+        display.textContent = display.textContent.slice(0, -1);
+    }
+}
+
+// Function to calculate the result
+function calculate() {
+    try {
+        let expression = display.textContent.trim();
+
+        // Handle cases where expression ends with an operator
+        if (/[\/*+\-]$/.test(expression)) {
+            expression = expression.slice(0, -1); // Remove trailing operator
+        }
+
+        // Basic validation to check for empty expressions or malformed input
+        if (!expression || /[/*+\-]{2,}/.test(expression)) {
+            throw new Error("Invalid expression");
+        }
+
+        // Evaluate the expression
+        display.textContent = eval(expression) || '';
+        newInput = true; // Indicate that the next input should start fresh
+    } catch (e) {
+        display.textContent = 'Error';
+    }
+}
+
+   </script>
+</body>
+</html>
